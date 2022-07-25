@@ -35,7 +35,6 @@ questions:
     <mojahige-{{ inputs.value | lower }}></mojahige-{{ inputs.value | lower }}>
   </body>
 </html>
-```
 {{ noop }}
 ```
 
