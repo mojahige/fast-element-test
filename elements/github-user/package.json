@@ -1,0 +1,10 @@
+{
+  "name": "@mojahige/github-user",
+  "author": "mojahige (Yu Nozato)",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --outfile=dist/mojahige-github-user.js --minify",
+    "test": "vitest"
+  }
+}
