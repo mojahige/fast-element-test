@@ -44,7 +44,11 @@ export type GitHubUser = {
   updated_at: string;
 };
 
-export type User = Pick<GitHubUser, "name" | "avatar_url" | "url">;
+export type User = {
+  name: GitHubUser["name"];
+  avatarURL: GitHubUser["avatar_url"];
+  htmlURL: GitHubUser["html_url"];
+};
 
 export const emptyMessage = "name attribute has no value...😔";
 export const loadingMessage = "Loading...⏳";
@@ -84,23 +88,23 @@ const loadingTemplateStyle = css`
 `;
 
 const userTemplate = html<Element>`
-  <div>
-    <div class="avaterContainer">
+  <div class="info">
+    <div class="avatar">
       <img
-        class="avater"
-        src=${(x) => x.user.avatar_url}
+        class="avatarImage"
+        src=${(x) => x.user.avatarURL}
         alt
         width="460"
         height="460"
       />
     </div>
-    <div class="info">
-      <div class="infoInner">
+    <div class="detail">
+      <div class="detailInner">
         <p>name: ${(x) => x.user.name}</p>
         <p class="url">
           url:
-          <a href="${(x) => x.user.url}" target="noreferrer">
-            ${(x) => x.user.url}
+          <a href="${(x) => x.user.htmlURL}" target="noreferrer">
+            ${(x) => x.user.htmlURL}
           </a>
         </p>
       </div>
@@ -109,10 +113,10 @@ const userTemplate = html<Element>`
 `;
 
 const userTemplateStyle = css`
-  .avaterContainer {
+  .avatar {
     text-align: center;
   }
-  .avater {
+  .avatarImage {
     width: min(50%, 160px);
     height: auto;
     margin-inline: inline;
@@ -120,12 +124,12 @@ const userTemplateStyle = css`
     border-radius: 50%;
     border: 2px solid lightgray;
   }
-  .info {
+  .detail {
     display: flex;
     justify-content: center;
     margin-top: 16px;
   }
-  .infoInner {
+  .detailInner {
     width: fit-content;
   }
   .infoInner > * {
@@ -145,8 +149,13 @@ const userTemplateStyle = css`
 const template = html<Element>`
   <section>
     ${when((x) => !x.hasName, html<Element>`${emptyNameTemplate}`)}
-    ${when((x) => x.loading, html<Element>`${loadingTemplate}`)}
-    ${when((x) => !x.loading, html<Element>`${userTemplate}`)}
+    ${when(
+      (x) => x.hasName,
+      html<Element>`
+        ${when((x) => x.loading, html<Element>`${loadingTemplate}`)}
+        ${when((x) => !x.loading, html<Element>`${userTemplate}`)}
+      `
+    )}
   </section>
 `;
 
@@ -180,8 +189,8 @@ export class Element extends FASTElement {
   @attr name = "";
   @observable user: User = {
     name: "",
-    avatar_url: "",
-    url: "",
+    avatarURL: "",
+    htmlURL: "",
   };
 
   @volatile
@@ -217,8 +226,8 @@ export class Element extends FASTElement {
       return;
     }
 
-    const { name, avatar_url, url } = await this.getUser();
+    const { name, avatar_url, html_url } = await this.getUser();
 
-    this.user = { name, avatar_url, url };
+    this.user = { name, avatarURL: avatar_url, htmlURL: html_url };
   }
 }
