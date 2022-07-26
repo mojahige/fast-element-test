@@ -6,5 +6,8 @@ export default {
   title: "elements/GithubUser",
 } as Meta;
 
-export const GithubUser: Story = () =>
+export const IfNoNameIsGiven: Story = () =>
+  html`<mojahige-github-user></mojahige-github-user>`;
+
+export const HasName: Story = () =>
   html`<mojahige-github-user name="mojahige"></mojahige-github-user>`;
