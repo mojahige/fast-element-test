@@ -9,7 +9,7 @@ import {
   css,
 } from "@microsoft/fast-element";
 
-type GitHubUser = {
+export type GitHubUser = {
   login: string;
   id: number;
   node_id: string;
