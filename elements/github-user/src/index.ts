@@ -44,11 +44,14 @@ type GitHubUser = {
   updated_at: string;
 };
 
-type User = Partial<Pick<GitHubUser, "name" | "avatar_url" | "url">>;
+export type User = Pick<GitHubUser, "name" | "avatar_url" | "url">;
+
+export const emptyMessage = "name attribute has no value...😔";
+export const loadingMessage = "Loading...⏳";
 
 const emptyNameTemplate = html`
   <p class="empty">
-    <span>name attribute has no value...😔</span>
+    <span>${emptyMessage}</span>
   </p>
 `;
 
@@ -65,7 +68,7 @@ const emptyNameTemplateStyle = css`
 
 const loadingTemplate = html`
   <p class="loading">
-    <span>Loading...</span>
+    <span>${loadingMessage}</span>
   </p>
 `;
 
@@ -95,7 +98,10 @@ const userTemplate = html<Element>`
       <div class="infoInner">
         <p>name: ${(x) => x.user.name}</p>
         <p class="url">
-          url: <a href="${(x) => x.user.url}">${(x) => x.user.url}</a>
+          url:
+          <a href="${(x) => x.user.url}" target="noreferrer">
+            ${(x) => x.user.url}
+          </a>
         </p>
       </div>
     </div>
@@ -138,9 +144,9 @@ const userTemplateStyle = css`
 
 const template = html<Element>`
   <section>
-    ${when((x) => !x.name, html<Element>`${emptyNameTemplate}`)}
-    ${when((x) => x.name && !x.hasUser, html<Element>`${loadingTemplate}`)}
-    ${when((x) => x.hasUser, html<Element>`${userTemplate}`)}
+    ${when((x) => !x.hasName, html<Element>`${emptyNameTemplate}`)}
+    ${when((x) => x.loading, html<Element>`${loadingTemplate}`)}
+    ${when((x) => !x.loading, html<Element>`${userTemplate}`)}
   </section>
 `;
 
@@ -172,7 +178,16 @@ const styles = css`
 export class Element extends FASTElement {
   url = "https://api.github.com/users/";
   @attr name = "";
-  @observable user: User = {};
+  @observable user: User = {
+    name: "",
+    avatar_url: "",
+    url: "",
+  };
+
+  @volatile
+  get hasName() {
+    return !!this.name;
+  }
 
   @volatile
   get githubURL() {
@@ -181,7 +196,12 @@ export class Element extends FASTElement {
 
   @volatile
   get hasUser() {
-    return this.user.name;
+    return !!this.user?.name;
+  }
+
+  @volatile
+  get loading() {
+    return this.hasName && !this.hasUser;
   }
 
   async getUser(): Promise<GitHubUser> {
