@@ -20,6 +20,7 @@
     <script type="module" src="./dist/mojahige-github-user.js"></script>
   </head>
   <body>
-    <mojahige-github-user></mojahige-github-user>
+    <mojahige-github-user name="mojahige"></mojahige-github-user>
   </body>
 </html>
+```

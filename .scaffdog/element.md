@@ -14,7 +14,7 @@ questions:
 
 ## How to use
 
-```html
+{{ "```html" }}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -35,6 +35,7 @@ questions:
     <mojahige-{{ inputs.value | lower }}></mojahige-{{ inputs.value | lower }}>
   </body>
 </html>
+{{ "```" }}
 {{ noop }}
 ```
 
